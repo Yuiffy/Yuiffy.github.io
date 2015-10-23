@@ -18,7 +18,12 @@
     <![endif]-->
     <style>
         canvas {
-            position: absolute;
+            position: absolute
+        }
+
+        .mycan {
+            width: 800px;
+            height: 480px;
         }
 
         #hebican {
@@ -173,8 +178,8 @@
                 var ny = y;
                 nx += go[dir].x;
                 ny += go[dir].y;
-                nx=(nx+wnum)%wnum;
-                ny=(ny+hnum)%hnum;
+                nx = (nx + wnum) % wnum;
+                ny = (ny + hnum) % hnum;
                 if ((nx < 0) || (ny < 0) || (nx >= wnum) || (ny >= hnum))return;
                 else {
                     delBlk(x, y);
@@ -310,11 +315,11 @@
     <div class="row">
         <div class="col-md-12">
             <canvas class="mycan" id="myCanvas" width="800" height="480"
-                    style="width:800px; height: 480px;"></canvas>
+                    ></canvas>
             <canvas class="mycan" id="canvas" width="800" height="480"
-                    style="width:800px; height: 480px;"></canvas>
+                    ></canvas>
             <canvas class="mycan" id="hebican" width="800" height="480"
-                    style="width:800px; height: 480px;"></canvas>
+                    ></canvas>
         </div>
     </div>
     <div class="row">
