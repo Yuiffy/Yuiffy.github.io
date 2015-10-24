@@ -41,6 +41,7 @@ canvas {
             var gripw = 20, startX = 10, startY = 10, wnum = 39, hnum = 23;
 			var hebiColor = "#66BA98", foodColor = "#CD1277";
 			var bgColor = "#CFDFFF", lineColor = 'orange';
+			var foodNumber = 10;
 			var timeWait=100;
 			var score=0;
 			var gameOverFlag = false;
@@ -156,9 +157,10 @@ canvas {
 				setTimeout(hebiStep, timeWait, oneHebi);
             }
 			var oneHebi = newHebi(1,1,0);
-			var food = newFood();
-			console.log(food);
-			addBlk(food.x, food.y, foodColor);
+			for(i=0; i<foodNumber; i++){
+				var food = newFood();
+				addBlk(food.x, food.y, foodColor);
+			}
             hebiStep(oneHebi);
 
         }
