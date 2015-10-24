@@ -35,111 +35,15 @@ canvas {
 }
 </style>
     <script>
-
-        function cinit() {
-            clock();
-            setInterval(clock, 1000);
-        }
-        function clock() {
-            var now = new Date();
-            var ctx = document.getElementById('canvas').getContext('2d');
-            ctx.save();
-            ctx.clearRect(0, 0, 150, 150);
-            ctx.translate(75, 75);
-            ctx.scale(0.4, 0.4);
-            ctx.rotate(-Math.PI / 2);
-            ctx.strokeStyle = "black";
-            ctx.fillStyle = "white";
-            ctx.lineWidth = 8;
-            ctx.lineCap = "round";
-
-            // Hour marks
-            ctx.save();
-            for (var i = 0; i < 12; i++) {
-                ctx.beginPath();
-                ctx.rotate(Math.PI / 6);
-                ctx.moveTo(100, 0);
-                ctx.lineTo(120, 0);
-                ctx.stroke();
-            }
-            ctx.restore();
-
-            // Minute marks
-            ctx.save();
-            ctx.lineWidth = 5;
-            for (i = 0; i < 60; i++) {
-                if (i % 5 != 0) {
-                    ctx.beginPath();
-                    ctx.moveTo(117, 0);
-                    ctx.lineTo(120, 0);
-                    ctx.stroke();
-                }
-                ctx.rotate(Math.PI / 30);
-            }
-            ctx.restore();
-
-            var sec = now.getSeconds();
-            var min = now.getMinutes();
-            var hr = now.getHours();
-            hr = hr >= 12 ? hr - 12 : hr;
-
-            ctx.fillStyle = "black";
-
-            // write Hours
-            ctx.save();
-            ctx.rotate(hr * (Math.PI / 6) + (Math.PI / 360) * min + (Math.PI / 21600) * sec)
-            ctx.lineWidth = 14;
-            ctx.beginPath();
-            ctx.moveTo(-20, 0);
-            ctx.lineTo(80, 0);
-            ctx.stroke();
-            ctx.restore();
-
-            // write Minutes
-            ctx.save();
-            ctx.rotate((Math.PI / 30) * min + (Math.PI / 1800) * sec)
-            ctx.lineWidth = 10;
-            ctx.beginPath();
-            ctx.moveTo(-28, 0);
-            ctx.lineTo(112, 0);
-            ctx.stroke();
-            ctx.restore();
-
-            // Write seconds
-            ctx.save();
-            ctx.rotate(sec * Math.PI / 30);
-            ctx.strokeStyle = "#D40000";
-            ctx.fillStyle = "#D40000";
-            ctx.lineWidth = 6;
-            ctx.beginPath();
-            ctx.moveTo(-30, 0);
-            ctx.lineTo(83, 0);
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.arc(0, 0, 10, 0, Math.PI * 2, true);
-            ctx.fill();
-            ctx.beginPath();
-            ctx.arc(95, 0, 10, 0, Math.PI * 2, true);
-            ctx.stroke();
-            ctx.fillStyle = "#555";
-            ctx.arc(0, 0, 3, 0, Math.PI * 2, true);
-            ctx.fill();
-            ctx.restore();
-
-            ctx.beginPath();
-            ctx.lineWidth = 14;
-            ctx.strokeStyle = '#325FA2';
-            ctx.arc(0, 0, 142, 0, Math.PI * 2, true);
-            ctx.stroke();
-
-            ctx.restore();
-        }
         var x = 0, y = 0;
-        var dir = 0;
+        var dir = 0, fdir = 0;
         function hebiGame(bgctx, hebictx) {
             var gripw = 20, startX = 10, startY = 10, wnum = 39, hnum = 23;
 			var hebiColor = "#66BA98", foodColor = "#CD1277";
 			var bgColor = "#CFDFFF", lineColor = 'orange';
+			var timeWait=100;
+			var score=0;
+			var gameOverFlag = false;
 			
 			var makeMapArray = function (){
 				var ret = new Array(wnum);
@@ -166,6 +70,9 @@ canvas {
             bgctx.fillStyle = bgColor;
             bgctx.fillRect(0, 0, 800, 600);
             makeMap(bgctx, startX, startY, gripw, wnum, hnum);
+			hebictx.clearRect(0,0,800,600);
+			clearInputType();
+			dir=0;fdir=0;
 
             var addBlk = function (x, y, color) {
                 ctx.save();
@@ -188,8 +95,10 @@ canvas {
 			var newFood = function(){
 				wnum = 39, hnum = 23;
 				var x,y;
-				x = getRandom(wnum);
-				y = getRandom(hnum);
+				do{
+					x = getRandom(wnum);
+					y = getRandom(hnum);
+				}while(map[x][y]!=null);
 				return {x:x, y:y};
 			}
 			
@@ -210,7 +119,14 @@ canvas {
 				return ret;
 			}
 			
+			var gameOver = function(){
+				gameOverFlag = true;
+				alert("Game Over! Your score is "+score+ " !");
+				hebiGame(bgctx,hebictx);
+			}
+			
             var hebiStep = function (hebi) {
+				if(gameOverFlag)return;
                 var nx = hebi[hebi.length-1].x;
                 var ny = hebi[hebi.length-1].y;
                 nx += go[dir].x;
@@ -221,6 +137,11 @@ canvas {
 				if(map[nx][ny]==foodColor){
 					var food = newFood();
 					addBlk(food.x,food.y,foodColor);
+					score++;
+					if(timeWait>=10) timeWait--;
+				}else if (map[nx][ny]!=null){
+					gameOver();
+					return;
 				}else{
 					var first = hebi.shift();
 					delBlk(first.x, first.y);
@@ -229,26 +150,17 @@ canvas {
 				y = ny;
 				hebi.push({x:x, y:y});
 				addBlk(x, y,hebiColor);
+				fdir = dir;
+				setTimeout(hebiStep, timeWait, oneHebi);
             }
 			var oneHebi = newHebi(1,1,0);
 			var food = newFood();
 			console.log(food);
 			addBlk(food.x, food.y, foodColor);
             hebiStep(oneHebi);
-            setInterval(hebiStep, 50, oneHebi);
 
         }
-        function hebiInit(ctx) {
-            sbiStep(ctx);
-            setInterval(sbiStep, 10, ctx);
-        }
-        function sbiStep(ctx) {
-            ctx.restore();
-            ctx.save();
-            ctx.fillStyle = '#00FF00';
-            ctx.fillRect(20 * x, y, 10, 10);
-            x++;
-        }
+
         var inputType = {
             right: false,
             up: false,
@@ -256,6 +168,16 @@ canvas {
             down: false,
             quit: false
         };
+		
+		function clearInputType(){
+			inputType = {
+				right: false,
+				up: false,
+				left: false,
+				down: false,
+				quit: false
+			};
+		}
 
         function keyInput(keyDown, event) {
             //console.log(keyDown, event);
@@ -344,12 +266,13 @@ canvas {
 
             if (keyDown)press(keynum);
             else release(keynum);
-
-            if (inputType.right)dir = 0;
-            else if (inputType.left)dir = 1;
-            else if (inputType.up)dir = 2;
-            else if (inputType.down)dir = 3;
-
+			
+			var newDir=-1;
+            if (inputType.right)newDir = 0;
+            else if (inputType.left)newDir = 1;
+            else if (inputType.up)newDir = 2;
+            else if (inputType.down)newDir = 3;
+			if(newDir!=-1 && newDir!=(fdir^1))dir = newDir;
             //console.log(inputType);
             return false;
         }
@@ -396,8 +319,6 @@ canvas {
     }
     var hebictx = $("#hebican")[0].getContext('2d');
     hebiGame(ctx, hebictx);
-    hebiInit($("#hebican")[0].getContext('2d'));
-    cinit();
 </script>
 </body>
 </html>
