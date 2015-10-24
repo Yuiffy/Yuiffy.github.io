@@ -139,12 +139,13 @@ canvas {
 					addBlk(food.x,food.y,foodColor);
 					score++;
 					if(timeWait>=10) timeWait--;
-				}else if (map[nx][ny]!=null){
-					gameOver();
-					return;
 				}else{
 					var first = hebi.shift();
 					delBlk(first.x, first.y);
+				}
+				if (map[nx][ny]!=null){
+					gameOver();
+					return;
 				}
 				x = nx;
 				y = ny;
