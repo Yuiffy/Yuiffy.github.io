@@ -39,7 +39,9 @@ canvas {
         var dir = 0, fdir = 0;
         function hebiGame(bgctx, hebictx) {
             var gripw = 20, startX = 10, startY = 10, wnum = 39, hnum = 23;
-			var hebiColor = "#66BA98", foodColor = "#CD1277";
+			var foodColor = "#CD1277";
+			var hebiColorHex = 0x66BA98, hebiColorAdd = 0x010000 - 0x000101;
+			var hebiColor = '#' + hebiColorHex.toString(16);
 			var bgColor = "#CFDFFF", lineColor = 'orange';
 			var foodNumber = 10;
 			var timeWait=100;
@@ -140,7 +142,11 @@ canvas {
 					addBlk(food.x,food.y,foodColor);
 					delBlk(nx,ny);
 					score++;
-					if(timeWait>=10) timeWait--;
+					if(timeWait>=10){
+						timeWait--;
+						hebiColorHex += hebiColorAdd;
+						hebiColor = '#' + hebiColorHex.toString(16);
+					}
 				}else{
 					var first = hebi.shift();
 					delBlk(first.x, first.y);
@@ -312,15 +318,6 @@ canvas {
         $("#warnWords").html("浏览器不支持canvas,请使用Chrome浏览器.");
     }
     var ctx = canvas.getContext('2d');
-    ctx.fillStyle = '#CFDFEF';
-    ctx.fillRect(0, 0, 300, 1000);
-    ctx.fillStyle = '#000000';
-
-    var i = 0;
-    while (i < 100) {
-        ctx.fillRect(15 * i, 0, 10, 10);
-        i++;
-    }
     var hebictx = $("#hebican")[0].getContext('2d');
     hebiGame(ctx, hebictx);
 </script>
