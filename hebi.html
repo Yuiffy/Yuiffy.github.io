@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-<head>
+    <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -17,27 +17,23 @@
     <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
     <style>
-        canvas {
-            position: absolute
-        }
-
-        .mycan {
-            width: 800px;
-            height: 480px;
-        }
-
-        #hebican {
-            z-index: 3
-        }
-
-        #canvas {
-            z-index: 2
-        }
-
-        #myCanvas {
-            z-index: 1
-        }
-    </style>
+canvas {
+	position: absolute
+}
+.mycan {
+	width: 800px;
+	height: 480px;
+}
+#hebican {
+	z-index: 3
+}
+#canvas {
+	z-index: 2
+}
+#myCanvas {
+	z-index: 1
+}
+</style>
     <script>
 
         function cinit() {
@@ -142,8 +138,19 @@
         var dir = 0;
         function hebiGame(bgctx, hebictx) {
             var gripw = 20, startX = 10, startY = 10, wnum = 39, hnum = 23;
-            makeMap = function (ctx, startX, startY, gripw, wnum, hnum) {
-                ctx.strokeStyle = 'orange';
+			var hebiColor = "#66BA98", foodColor = "#CD1277";
+			var bgColor = "#CFDFFF", lineColor = 'orange';
+			
+			var makeMapArray = function (){
+				var ret = new Array(wnum);
+				for(var i=0; i<wnum; i++)
+					ret[i] = new Array(hnum);
+				return ret;
+			}
+			var map = makeMapArray();
+			
+            var makeMap = function (ctx, startX, startY, gripw, wnum, hnum) {
+                ctx.strokeStyle = lineColor;
                 var ty = startY, tx = startX;
                 for (var i = 0; i < wnum; i++) {
                     ctx.strokeRect(tx, ty, gripw, gripw * hnum);
@@ -156,45 +163,84 @@
                     ty += gripw;
                 }
             }
-            bgctx.fillStyle = "#CFDFFF";
+            bgctx.fillStyle = bgColor;
             bgctx.fillRect(0, 0, 800, 600);
             makeMap(bgctx, startX, startY, gripw, wnum, hnum);
 
-            addBlk = function (x, y) {
+            var addBlk = function (x, y, color) {
                 ctx.save();
-                ctx.fillStyle = "#66BA98";
+                ctx.fillStyle = color;
                 ctx.fillRect(startX + x * gripw, startY + y * gripw, gripw, gripw);
+				map[x][y]=color;
                 ctx.restore();
             }
-            delBlk = function (x, y) {
+            var delBlk = function (x, y) {
                 ctx.clearRect(startX + x * gripw, startY + y * gripw, gripw, gripw);
+				map[x][y]=null;
             }
+			
+			//获得0~x-1的随机数
+			var getRandom = function(x){
+				var ran = Math.random();
+				return Math.floor(Math.random() * ( x ));
+			}
+			
+			var newFood = function(){
+				wnum = 39, hnum = 23;
+				var x,y;
+				x = getRandom(wnum);
+				y = getRandom(hnum);
+				return {x:x, y:y};
+			}
+			
             var ctx = hebictx;
-            addBlk(0, 0);
             var x = 0, y = 0;
             var go = [{x: 1, y: 0}, {x: -1, y: 0}, {x: 0, y: -1}, {x: 0, y: 1}];
-            var hebiStep = function () {
-                var nx = x;
-                var ny = y;
+			var DIRECTION = {right:0, left:1, up:2, down:3};
+			
+			var newHebi = function (x,y,dir){
+				var ret = [];
+				var nx=x, ny=y;
+				for(var i=0; i<3; i++){
+					ret.push({x:nx,y:ny});
+					addBlk(nx,ny,hebiColor);
+					nx+=go[dir].x;
+					ny+=go[dir].y;
+				}
+				return ret;
+			}
+			
+            var hebiStep = function (hebi) {
+                var nx = hebi[hebi.length-1].x;
+                var ny = hebi[hebi.length-1].y;
                 nx += go[dir].x;
                 ny += go[dir].y;
                 nx = (nx + wnum) % wnum;
                 ny = (ny + hnum) % hnum;
-                if ((nx < 0) || (ny < 0) || (nx >= wnum) || (ny >= hnum))return;
-                else {
-                    delBlk(x, y);
-                    x = nx;
-                    y = ny;
-                    addBlk(x, y);
-                }
+                //if ((nx < 0) || (ny < 0) || (nx >= wnum) || (ny >= hnum))return;
+				if(map[nx][ny]==foodColor){
+					var food = newFood();
+					addBlk(food.x,food.y,foodColor);
+				}else{
+					var first = hebi.shift();
+					delBlk(first.x, first.y);
+				}
+				x = nx;
+				y = ny;
+				hebi.push({x:x, y:y});
+				addBlk(x, y,hebiColor);
             }
-            hebiStep();
-            setInterval(hebiStep, 500);
+			var oneHebi = newHebi(1,1,0);
+			var food = newFood();
+			console.log(food);
+			addBlk(food.x, food.y, foodColor);
+            hebiStep(oneHebi);
+            setInterval(hebiStep, 50, oneHebi);
 
         }
         function hebiInit(ctx) {
             sbiStep(ctx);
-            setInterval(sbiStep, 200, ctx);
+            setInterval(sbiStep, 10, ctx);
         }
         function sbiStep(ctx) {
             ctx.restore();
@@ -202,7 +248,6 @@
             ctx.fillStyle = '#00FF00';
             ctx.fillRect(20 * x, y, 10, 10);
             x++;
-//            console.log(ctx);
         }
         var inputType = {
             right: false,
@@ -213,7 +258,7 @@
         };
 
         function keyInput(keyDown, event) {
-            console.log(keyDown, event);
+            //console.log(keyDown, event);
             var KEY = {
                 D: 68,
                 W: 87,
@@ -309,32 +354,31 @@
             return false;
         }
     </script>
-</head>
-<body onkeydown="return keyInput(true,event)" onkeyup="return keyInput(false,event)">
+    </head>
+    <body onkeydown="return keyInput(true,event)" onkeyup="return keyInput(false,event)">
 <div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <canvas class="mycan" id="myCanvas" width="800" height="480"
+      <div class="row">
+    <div class="col-md-12">
+          <canvas class="mycan" id="myCanvas" width="800" height="480"
                     ></canvas>
-            <canvas class="mycan" id="canvas" width="800" height="480"
+          <canvas class="mycan" id="canvas" width="800" height="480"
                     ></canvas>
-            <canvas class="mycan" id="hebican" width="800" height="480"
+          <canvas class="mycan" id="hebican" width="800" height="480"
                     ></canvas>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <p id="warnWords"></p>
+  </div>
+      <div class="row">
+    <div class="col-md-12">
+          <p id="warnWords"></p>
         </div>
+  </div>
     </div>
+<!-- /.container --> 
 
-</div>
-<!-- /.container -->
-
-<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<script src="js/jquery.js"></script>
-<!-- Include all compiled plugins (below), or include individual files as needed -->
-<script src="js/bootstrap.min.js"></script>
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) --> 
+<script src="js/jquery.js"></script> 
+<!-- Include all compiled plugins (below), or include individual files as needed --> 
+<script src="js/bootstrap.min.js"></script> 
 <script>
     var canvas = $("#myCanvas")[0];
     if (!canvas.getContext) {
