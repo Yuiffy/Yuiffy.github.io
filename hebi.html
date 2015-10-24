@@ -137,6 +137,7 @@ canvas {
 				if(map[nx][ny]==foodColor){
 					var food = newFood();
 					addBlk(food.x,food.y,foodColor);
+					delBlk(nx,ny);
 					score++;
 					if(timeWait>=10) timeWait--;
 				}else{
