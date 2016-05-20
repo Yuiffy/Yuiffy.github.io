@@ -35,7 +35,11 @@
             manColor: 'blue',
             frameTime: 25,
             gravity: 1,
-            playerAcc: 1,
+            playerRunAcc: 2,
+            playerAirAcc: 1,
+            runMaxVelocity: 10,
+            landFriction:1 ,
+            airMaxVelocity: 60,
             jumpVelocity: 17,
             startPoint: [100, 50],
             playerSize: [20, 20]
@@ -68,6 +72,10 @@
             return a > b ? a : b;
         }
 
+        function abs(a){
+            return a>0?a:-a;
+        }
+
         /**
          * @return {boolean}
          */
@@ -81,7 +89,7 @@
             min(c.x, d.x) > max(a.x, b.x) ||
             min(c.y, d.y) > max(a.y, b.y));
         }
-        function isCrossWithAny(r, rs){
+        function isCrossWithAny(r, rs) {
             for (i in rs) {
                 if (RectCross(r, rs[i])) {
                     return true;
@@ -93,35 +101,46 @@
         function marioGame(bgCtx, frontCtx) {
             bgCtx.fillStyle = GameConstParam.squareColor;
             frontCtx.fillStyle = GameConstParam.manColor;
-            var squares = [[100, 200, 100, 100], [300, 400, 50, 50], [350,200,123,456], [300,277,1000,25]];
+            var squares = [[100, 200, 100, 100], [300, 400, 50, 50], [350, 200, 123, 456], [300, 277, 800, 25]];
             displayBg(bgCtx, squares);
             var playerPoint = GameConstParam.startPoint;
-            var playerVelocity = [0,0];
+            var playerVelocity = [0, 0];
             var OneFrame = function () {
                 clearMan(frontCtx, playerPoint);
                 var prePoint = playerPoint.slice();
-                if(playerPoint[1]>=1000)playerPoint[1]=-100;
+                if (playerPoint[1] >= 1000)playerPoint[1] = -100;
                 playerVelocity[1] += GameConstParam.gravity;
-                playerPoint[1]+=playerVelocity[1];
+                playerVelocity[1] = min(playerVelocity[1], GameConstParam.airMaxVelocity);
+                playerVelocity[1] = max(playerVelocity[1], -GameConstParam.airMaxVelocity);
+                playerPoint[1] += playerVelocity[1];
                 var manRect = playerPoint.concat(GameConstParam.playerSize);
                 var onGround = false;
-                if(isCrossWithAny(manRect, squares)){
+                if (isCrossWithAny(manRect, squares)) {
                     playerPoint = prePoint;
-                    if(playerVelocity[1]>0)onGround = true;
+                    if (playerVelocity[1] > 0)onGround = true;
                     playerVelocity[1] = 0;
                 }
                 if (controlState.jump && onGround) {
                     playerVelocity[1] -= GameConstParam.jumpVelocity;
                 }
-                if (controlState.left || controlState.right) {
-                    prePoint = playerPoint.slice();
-                    if (controlState.left)playerPoint[0]-=10;
-                    else if (controlState.right)playerPoint[0]+=10;
-                    manRect = playerPoint.concat(GameConstParam.playerSize);
-                    if(isCrossWithAny(manRect, squares)){
-                        playerPoint = prePoint;
-                    }
+
+                prePoint = playerPoint.slice();
+                var acc = onGround?GameConstParam.playerRunAcc : GameConstParam.playerAirAcc;
+                if (controlState.left)playerVelocity[0] -= acc;
+                else if (controlState.right)playerVelocity[0] += acc;
+                playerVelocity[0] = min(playerVelocity[0], GameConstParam.runMaxVelocity);
+                playerVelocity[0] = max(playerVelocity[0], -GameConstParam.runMaxVelocity);
+                if(onGround && playerVelocity[0]!=0){
+                    playerVelocity[0] -= ((playerVelocity[0]>0)?1:-1) *
+                            min(abs(playerVelocity[0]) , GameConstParam.landFriction);
                 }
+                playerPoint[0] += playerVelocity[0];
+                manRect = playerPoint.concat(GameConstParam.playerSize);
+                if (isCrossWithAny(manRect, squares)) {
+                    playerPoint = prePoint;
+                    playerVelocity[0] = 0;
+                }
+
 
                 displayMan(frontCtx, playerPoint);
                 setTimeout(OneFrame, GameConstParam.frameTime);
