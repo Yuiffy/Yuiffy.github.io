@@ -70,9 +70,9 @@
          */
         function RectCross(s1, s2) {
             a = {x: s1[0], y: s1[1]};
-            b = {x: s1[0] + s1[2], y: s1[1] + s1[3]};
+            b = {x: s1[0] + s1[2] - 1, y: s1[1] + s1[3] - 1};
             c = {x: s2[0], y: s2[1]};
-            d = {x: s2[0] + s2[2], y: s2[1] + s2[3]};
+            d = {x: s2[0] + s2[2] - 1, y: s2[1] + s2[3] - 1};
             return !(min(a.x, b.x) > max(c.x, d.x) ||
             min(a.y, b.y) > max(c.y, d.y) ||
             min(c.x, d.x) > max(a.x, b.x) ||
