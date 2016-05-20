@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Mario</title>
+
+    <style>
+        canvas {
+            position: absolute
+        }
+
+        .myCan {
+            width: 800px;
+            height: 480px;
+        }
+
+        #frontCanvas {
+            z-index: 3
+        }
+
+        #canvas {
+            z-index: 2
+        }
+
+        #bgCanvas {
+            z-index: 1
+        }
+    </style>
+    <script>
+
+        var GameConstParam = {
+            squareColor: 'orange',
+            manColor: 'blue',
+            frameTime: 2,
+            startPoint: [100, 50],
+            playerSize: [20, 20]
+        };
+
+        function displayBg(bgCtx, squares) {
+            for (i in squares) {
+                s = squares[i];
+                bgCtx.fillRect(s[0], s[1], s[2], s[3]);
+            }
+        }
+        function clearMan(frontCtx, playerPoint) {
+            frontCtx.clearRect(playerPoint[0],
+                    playerPoint[1],
+                    GameConstParam.playerSize[0],
+                    GameConstParam.playerSize[1]);
+        }
+        function displayMan(frontCtx, playerPoint) {
+            frontCtx.fillRect(playerPoint[0],
+                    playerPoint[1],
+                    GameConstParam.playerSize[0],
+                    GameConstParam.playerSize[1]);
+        }
+
+        function min(a, b) {
+            return a < b ? a : b;
+        }
+
+        function max(a, b) {
+            return a > b ? a : b;
+        }
+
+        /**
+         * @return {boolean}
+         */
+        function RectCross(s1, s2) {
+            a = {x: s1[0], y: s1[1]};
+            b = {x: s1[0] + s1[2], y: s1[1] + s1[3]};
+            c = {x: s2[0], y: s2[1]};
+            d = {x: s2[0] + s2[2], y: s2[1] + s2[3]};
+            return !(min(a.x, b.x) > max(c.x, d.x) ||
+            min(a.y, b.y) > max(c.y, d.y) ||
+            min(c.x, d.x) > max(a.x, b.x) ||
+            min(c.y, d.y) > max(a.y, b.y));
+        }
+
+        function marioGame(bgCtx, frontCtx) {
+            bgCtx.fillStyle = GameConstParam.squareColor;
+            frontCtx.fillStyle = GameConstParam.manColor;
+            var squares = [[100, 100, 100, 100], [300, 300, 50, 50], [350,100,123,456]];
+            displayBg(bgCtx, squares);
+            var playerPoint = GameConstParam.startPoint;
+            var OneFrame = function () {
+                clearMan(frontCtx, playerPoint);
+                var prePoint = playerPoint.slice();
+                playerPoint[1]++;
+                var manRect = playerPoint.concat(GameConstParam.playerSize);
+                var onGround = false;
+                for (i in squares) {
+                    if (RectCross(manRect, squares[i])) {
+                        console.log(playerPoint, prePoint);
+                        playerPoint = prePoint.slice();
+                        onGround = true;
+                        break;
+                    }
+                }
+                if (controlState.jump && onGround) {
+                    playerPoint[1] -= 100;
+                }
+                if (controlState.left || controlState.right) {
+                    prePoint = playerPoint.slice();
+                    if (controlState.left)playerPoint[0]--;
+                    else if (controlState.right)playerPoint[0]++;
+                    manRect = playerPoint.concat(GameConstParam.playerSize);
+                    for (i in squares) {
+                        if (RectCross(manRect, squares[i])) {
+                            playerPoint = prePoint;
+                            break;
+                        }
+                    }
+                }
+
+                displayMan(frontCtx, playerPoint);
+                setTimeout(OneFrame, GameConstParam.frameTime);
+            };
+            OneFrame();
+        }
+
+        var controlState = {
+            right: false,
+            left: false,
+            jump: false
+        };
+
+        var Const = {
+            defaultInputType: {
+                right: false,
+                up: false,
+                left: false,
+                down: false,
+                q: false,
+                space: false
+            },
+            KEY: {
+                68: 'right',//d
+                87: 'up',//w
+                65: 'left',//a
+                83: 'down',//s
+                39: 'right',
+                38: 'up',
+                37: 'left',
+                40: 'down',
+                81: 'q',
+                32: 'space'
+            }
+        };
+
+        var inputType = Const.defaultInputType;
+        var leftFirst = false;
+
+        function clearInputType() {
+            inputType = Const.defaultInputType;
+        }
+
+        function keyInput(keyDown, event) {
+//            console.log(keyDown, event);
+            var keyNum;
+
+            if (window.event) // IE
+            {
+                keyNum = event.keyCode
+            }
+            else if (event.which) // Netscape/Firefox/Opera
+            {
+                keyNum = event.which
+            }
+            function press(code) {
+                if (!code in Const.KEY) {
+                    console.log('press unrecognized key code: ' + code);
+                    return;
+                }
+                inputType[Const.KEY[code]] = true;
+            }
+
+            function release(code) {
+                if (!code in Const.KEY) {
+                    console.log('release unrecognized key code: ' + code);
+                    return;
+                }
+                inputType[Const.KEY[code]] = false;
+            }
+
+            if (keyDown)press(keyNum);
+            else release(keyNum);
+
+            if (!inputType.right && inputType.left) {
+                controlState.left = true;
+                controlState.right = false;
+                leftFirst = true;
+            } else if (!inputType.left && inputType.right) {
+                controlState.right = true;
+                controlState.left = false;
+                leftFirst = false;
+            } else if (!inputType.left && !inputType.right) {
+                controlState.right = false;
+                controlState.left = false;
+            } else if (inputType.left && inputType.right) {
+                controlState.left = !leftFirst;
+                controlState.right = leftFirst;
+            }
+            controlState.jump = inputType.up;
+            //console.log(inputType);
+            return false;
+        }
+    </script>
+</head>
+<body onkeydown="return keyInput(true,event)" onkeyup="return keyInput(false,event)">
+<canvas class="myCan" id="bgCanvas" width="800" height="480"
+></canvas>
+<canvas class="myCan" id="canvas" width="800" height="480"
+></canvas>
+<canvas class="myCan" id="frontCanvas" width="800" height="480"
+></canvas>
+<p id="warnWords"></p>
+<script src="js/jquery.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script>
+    var canvasBg = $("#bgCanvas")[0];
+    if (!canvasBg.getContext) {
+        $("#warnWords").html("浏览器不支持canvas,请使用Chrome浏览器.");
+    }
+    var bgCtx = canvasBg.getContext('2d');
+    var frontCtx = $("#frontCanvas")[0].getContext('2d');
+    marioGame(bgCtx, frontCtx);
+</script>
+</body>
+</html>
