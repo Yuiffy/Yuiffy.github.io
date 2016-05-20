@@ -12,8 +12,8 @@
         }
 
         .myCan {
-            width: 800px;
-            height: 480px;
+            width: 1280px;
+            height: 600px;
         }
 
         #frontCanvas {
@@ -33,7 +33,10 @@
         var GameConstParam = {
             squareColor: 'orange',
             manColor: 'blue',
-            frameTime: 2,
+            frameTime: 25,
+            gravity: 1,
+            playerAcc: 1,
+            jumpVelocity: 17,
             startPoint: [100, 50],
             playerSize: [20, 20]
         };
@@ -78,40 +81,44 @@
             min(c.x, d.x) > max(a.x, b.x) ||
             min(c.y, d.y) > max(a.y, b.y));
         }
+        function isCrossWithAny(r, rs){
+            for (i in rs) {
+                if (RectCross(r, rs[i])) {
+                    return true;
+                }
+            }
+            return false;
+        }
 
         function marioGame(bgCtx, frontCtx) {
             bgCtx.fillStyle = GameConstParam.squareColor;
             frontCtx.fillStyle = GameConstParam.manColor;
-            var squares = [[100, 100, 100, 100], [300, 300, 50, 50], [350,100,123,456]];
+            var squares = [[100, 200, 100, 100], [300, 400, 50, 50], [350,200,123,456], [300,277,1000,25]];
             displayBg(bgCtx, squares);
             var playerPoint = GameConstParam.startPoint;
+            var playerVelocity = [0,0];
             var OneFrame = function () {
                 clearMan(frontCtx, playerPoint);
                 var prePoint = playerPoint.slice();
-                playerPoint[1]++;
+                playerVelocity[1] += GameConstParam.gravity;
+                playerPoint[1]+=playerVelocity[1];
                 var manRect = playerPoint.concat(GameConstParam.playerSize);
                 var onGround = false;
-                for (i in squares) {
-                    if (RectCross(manRect, squares[i])) {
-                        console.log(playerPoint, prePoint);
-                        playerPoint = prePoint.slice();
-                        onGround = true;
-                        break;
-                    }
+                if(isCrossWithAny(manRect, squares)){
+                    playerPoint = prePoint;
+                    if(playerVelocity[1]>0)onGround = true;
+                    playerVelocity[1] = 0;
                 }
                 if (controlState.jump && onGround) {
-                    playerPoint[1] -= 100;
+                    playerVelocity[1] -= GameConstParam.jumpVelocity;
                 }
                 if (controlState.left || controlState.right) {
                     prePoint = playerPoint.slice();
-                    if (controlState.left)playerPoint[0]--;
-                    else if (controlState.right)playerPoint[0]++;
+                    if (controlState.left)playerPoint[0]-=10;
+                    else if (controlState.right)playerPoint[0]+=10;
                     manRect = playerPoint.concat(GameConstParam.playerSize);
-                    for (i in squares) {
-                        if (RectCross(manRect, squares[i])) {
-                            playerPoint = prePoint;
-                            break;
-                        }
+                    if(isCrossWithAny(manRect, squares)){
+                        playerPoint = prePoint;
                     }
                 }
 
@@ -210,11 +217,11 @@
     </script>
 </head>
 <body onkeydown="return keyInput(true,event)" onkeyup="return keyInput(false,event)">
-<canvas class="myCan" id="bgCanvas" width="800" height="480"
+<canvas class="myCan" id="bgCanvas" width="1280" height="600"
 ></canvas>
-<canvas class="myCan" id="canvas" width="800" height="480"
+<canvas class="myCan" id="canvas" width="1280" height="600"
 ></canvas>
-<canvas class="myCan" id="frontCanvas" width="800" height="480"
+<canvas class="myCan" id="frontCanvas" width="1280" height="600"
 ></canvas>
 <p id="warnWords"></p>
 <script src="js/jquery.js"></script>
