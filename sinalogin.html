@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" xmlns:wb="http://open.weibo.com/wb">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -18,6 +18,15 @@
     <script src="//cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
     <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+    <script>
+        function login(o) {
+            alert(o.screen_name)
+        }
+
+        function logout() {
+            alert('logout');
+        }
+    </script>
 </head>
 <body>
 <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -59,6 +68,10 @@
 
     <div class="starter-template">
         <span id="qqLoginBtn"></span>
+        <div id="wb_connect_btn"></div>
+        <wb:login-button type="3,2"></wb:login-button>
+        <wb:login-button type="3,2" onlogin="login" onlogout="logout"></wb:login-button>
+        <wb:share-button type="button" size="middle"></wb:share-button>
     </div>
 
     <div class="row">
@@ -78,9 +91,27 @@
     <script type="text/javascript" src="http://qzonestyle.gtimg.cn/qzone/openapi/qc_loader.js"
             data-appid="101323238"
             data-redirecturi="http://www.yuiffy.com" charset="utf-8"></script>
+    <script src="http://tjs.sjs.sinajs.cn/open/api/js/wb.js?appkey=3743198711&debug=true" type="text/javascript"
+            charset="utf-8"></script>
     <script type="text/javascript">
         QC.Login({
             btnId: "qqLoginBtn"    //插入按钮的节点id
+        });
+    </script>
+    <script>
+        WB2.anyWhere(function (W) {
+            W.widget.connectButton({
+                id: "wb_connect_btn",
+                type: '3,2',
+                callback: {
+                    login: function (o) { //登录后的回调函数
+                        alert("login: " + o.screen_name)
+                    },
+                    logout: function () { //退出后的回调函数
+                        alert('logout');
+                    }
+                }
+            });
         });
     </script>
 </div>
