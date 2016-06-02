@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
     <title>Yuiffy's Github Homepage</title>
-    <link href="/favicon.ico" type="image/x-icon" rel="icon" />
-	<meta property="qc:admins" content="156016464761516616375" />
-	<meta property="wb:webmaster" content="01c682aa58ed0077" />
+    <link href="/favicon.ico" type="image/x-icon" rel="icon"/>
+    <meta property="qc:admins" content="156016464761516616375"/>
+    <meta property="wb:webmaster" content="01c682aa58ed0077"/>
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <!-- Custom styles for this page -->
@@ -48,6 +48,12 @@
                         <li><a href="http://pan.baidu.com/s/1ntEOiTF">Win2003exfat_BaiduYun</a></li>
                     </ul>
                 </li>
+                <li>
+                    <div id="wb_connect_btn"></div>
+                </li>
+                <li>
+                    <span id="qqLoginBtn"></span>
+                </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="mailto:me@yuiffy.com?subject=Hello%20I like Bejita">Contact</a></li>
@@ -78,7 +84,7 @@
     </div>
     <div class="row">
         <div class="mastfoot">
-                <p>这个网站，强，无敌。<a href="http://www.miitbeian.gov.cn/" target="_blank">桂ICP备16004207号</a></p>
+            <p>这个网站，强，无敌。<a href="http://www.miitbeian.gov.cn/" target="_blank">桂ICP备16004207号</a></p>
         </div>
     </div>
 </div><!-- /.container -->
@@ -87,7 +93,31 @@
 <script src="js/jquery.js"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="js/bootstrap.min.js"></script>
-<script type="text/javascript"
-        src="http://qzonestyle.gtimg.cn/qzone/openapi/qc_loader.js" charset="utf-8" data-callback="true"></script>
+<script src="http://tjs.sjs.sinajs.cn/open/api/js/wb.js?appkey=3743198711&debug=true" type="text/javascript"
+        charset="utf-8"></script>
+<script>
+    WB2.anyWhere(function (W) {
+        W.widget.connectButton({
+            id: "wb_connect_btn",
+            type: '3,2',
+            callback: {
+                login: function (o) { //登录后的回调函数
+                    alert("login: " + o.screen_name)
+                },
+                logout: function () { //退出后的回调函数
+                    alert('logout');
+                }
+            }
+        });
+    });
+</script>
+<script type="text/javascript" src="http://qzonestyle.gtimg.cn/qzone/openapi/qc_loader.js"
+        data-appid="101323238"
+        data-redirecturi="http://www.yuiffy.com" charset="utf-8"></script>
+<script type="text/javascript">
+    QC.Login({
+        btnId: "qqLoginBtn"    //插入按钮的节点id
+    });
+</script>
 </body>
 </html>
