@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>AnyMoveSquares&Mario</title>
-
+    <script src="../js/common.js"></script>
     <style>
         canvas {
             position: absolute
@@ -71,29 +71,12 @@
                     GameConstParam.playerSize[1]);
         }
 
-        function min(a, b) {
-            return a < b ? a : b;
-        }
-
-        function max(a, b) {
-            return a > b ? a : b;
-        }
-
-        function abs(a) {
-            return a > 0 ? a : -a;
-        }
-
-        function argmax(a) {
-            if (!(a instanceof Array)) return -1;
-            var x = 0;
-            for (i in a)
-                if (a[i] > a[x])x = i;
-            return x;
-        }
 
         var nowChoose = 0
         var walkTable = [{'left': 0, 'right': 1, 'up': 2, 'down': 3}]
-        var theSquares = [[100, 200, 100, 100], [300, 400, 50, 50], [350, 200, 123, 456], [300, 277, 800, 25], [600, 400, 200, 200]];
+        //        var theSquares = [[100, 200, 100, 100], [300, 400, 50, 50], [350, 200, 123, 456], [300, 277, 800, 25], [600, 400, 200, 200]];
+        var theSquares = [[100, 100, 100, 100], [210, 100, 100, 100], [100, 210, 100, 100], [210, 210, 100, 100], [320, 100, 100, 210], [430, 100, 100, 100], [430, 210, 100, 100],
+            [100, 320, 210, 100], [100, 430, 100, 100], [210, 430, 100, 100], [320, 320, 210, 210], [540, 430, 100, 100]];
         function HighLightChange(before, now) {
             if (true) {//before != now
                 hlCtx.fillStyle = GameConstParam.highLightColor;
@@ -126,13 +109,14 @@
                 var am = [a[0] + a[2] * 0.5, a[1] + a[3] * 0.5];
                 var bm = [b[0] + b[2] * 0.5, b[1] + b[3] * 0.5];
                 if (bm[0] < am[0] && bm[1] >= a[1] && bm[1] <= a[1] + a[3]) {
-                    return 1e9 - (am[0] - bm[0]) * 10000 + (bm[1] - a[1])
+                    //b's middle is in the a's range , choose the nearest, then up most
+                    return 1e9 - (a[0] - (b[0] + b[2])) * 10000 - (bm[1] - a[1])
                 } else if (bm[0] < am[0] && am[1] >= b[1] && am[1] <= b[1] + b[3]) {
                     return 1e9 - (am[0] - bm[0]) * 10000 + (am[1] - b[1])
                 }
                 if (bm[0] > am[0])return -1e9;
-                if(abs(bm[1]-am[1])>abs(bm[0]-am[0]))return -1e9;
-                return 10000-abs(am[0] - bm[0]) - 2 * abs(bm[1] - am[1])
+                if (abs(bm[1] - am[1]) > abs(bm[0] - am[0]))return -1e9;
+                return 10000 - abs(am[0] - bm[0]) - 2 * abs(bm[1] - am[1])
             }
             var getScore = function (a, b, to) {
                 if (to == 'right') {
@@ -159,7 +143,7 @@
                     scores = new Array(theSquares.length);
                     for (var k in theSquares)
                         scores[k] = getScore(theSquares[i], theSquares[k], dirs[j]);
-                    console.log(theSquares[i], dirs[j], scores)
+//                    console.log(theSquares[i], dirs[j], scores)
                     ret[i][dirs[j]] = argmax(scores)
                 }
             }
@@ -192,7 +176,7 @@
         function marioGame(bgCtx, frontCtx) {
             bgCtx.fillStyle = GameConstParam.squareColor;
             frontCtx.fillStyle = GameConstParam.manColor;
-            var squares = [[100, 200, 100, 100], [300, 400, 50, 50], [350, 200, 123, 456], [300, 277, 800, 25], [600, 400, 200, 200]];
+            var squares = theSquares;
             displayBg(bgCtx, squares);
             var playerPoint = GameConstParam.startPoint;
             var playerVelocity = [0, 0];
@@ -273,43 +257,32 @@
 
         var inputType = Const.defaultInputType;
         var leftFirst = false;
+        function logicPress(key) {
+            inputType[key] = true;
+            moveCursor(key);
+        }
+        function logicRelease(key) {
+            inputType[key] = false;
+        }
+        function pressCode(code) {
+            if (!code in Const.KEY) {
+                console.log('press unrecognized key code: ' + code);
+                return;
+            }
+            logicPress(Const.KEY[code])
+        }
 
+        function releaseCode(code) {
+            if (!code in Const.KEY) {
+                console.log('release unrecognized key code: ' + code);
+                return;
+            }
+            logicRelease(Const.KEY[code]);
+        }
         function clearInputType() {
             inputType = Const.defaultInputType;
         }
-
-        function keyInput(keyDown, event) {
-//            console.log(keyDown, event);
-            var keyNum;
-
-            if (window.event) // IE
-            {
-                keyNum = event.keyCode
-            }
-            else if (event.which) // Netscape/Firefox/Opera
-            {
-                keyNum = event.which
-            }
-            function press(code) {
-                if (!code in Const.KEY) {
-                    console.log('press unrecognized key code: ' + code);
-                    return;
-                }
-                inputType[Const.KEY[code]] = true;
-                moveCursor(Const.KEY[code]);
-            }
-
-            function release(code) {
-                if (!code in Const.KEY) {
-                    console.log('release unrecognized key code: ' + code);
-                    return;
-                }
-                inputType[Const.KEY[code]] = false;
-            }
-
-            if (keyDown)press(keyNum);
-            else release(keyNum);
-
+        function marioControl(inputType) {
             if (!inputType.right && inputType.left) {
                 controlState.left = true;
                 controlState.right = false;
@@ -326,8 +299,86 @@
                 controlState.right = leftFirst;
             }
             controlState.jump = inputType.up;
-            //console.log(inputType);
+        }
+        function keyInput(keyDown, event) {
+//            console.log(keyDown, event);
+            var keyNum;
+
+            if (window.event) // IE
+            {
+                keyNum = event.keyCode
+            }
+            else if (event.which) // Netscape/Firefox/Opera
+            {
+                keyNum = event.which
+            }
+
+
+            if (keyDown)pressCode(keyNum);
+            else releaseCode(keyNum);
+
+            marioControl(inputType);
             return false;
+        }
+
+        window.addEventListener('load', touchSystem, false);
+        function touchSystem() {
+
+            document.addEventListener('touchstart', touch, false);
+            document.addEventListener('touchmove', touch, false);
+            document.addEventListener('touchend', touch, false);
+            var startX = {}, startY = {}, alreadyPress = {};
+
+            function touch(event) {
+                var event = event || window.event;
+
+//                var oInp = document.getElementById("inp");
+
+
+                //TODO:支持多手指，现在只看a[0]，不懂有没有问题
+                switch (event.type) {
+                    case "touchstart":
+//                        oInp.innerHTML = "Touch started (" + event.touches[0].clientX + "," + event.touches[0].clientY + ")";
+                        a = event.changedTouches;
+                        startX[a[0].identifier] = a[0].clientX;
+                        startY[a[0].identifier] = a[0].clientY;
+                        alreadyPress[a[0].identifier] = false;
+                        break;
+                    case "touchend":
+//                        oInp.innerHTML = "<br/>Touch end (" + event.changedTouches[0].clientX + "," + event.changedTouches[0].clientY + ")";
+                        a = event.changedTouches;
+                        move = alreadyPress[a[0].identifier];
+                        if (move != false) {
+                            logicRelease(move);
+                        }
+                        break;
+                    case "touchmove":
+                        event.preventDefault();
+                        a = event.changedTouches;
+                        x = a[0].clientX;
+                        y = a[0].clientY;
+                        if (!alreadyPress[a[0].identifier]) {
+                            fx = startX[a[0].identifier];
+                            fy = startY[a[0].identifier];
+                            if (abs(x - fx) > 10) {
+                                if (x > fx)
+                                    move = 'right'
+                                else
+                                    move = 'left'
+                                logicPress(move);
+                                alreadyPress[a[0].identifier] = move;
+                            } else if (abs(y - fy) > 10) {
+                                if (y > fy)
+                                    move = 'down';
+                                else move = 'up';
+                                logicPress(move);
+                                alreadyPress[a[0].identifier] = move;
+                            }
+                        }
+                        break;
+                }
+                marioControl(inputType);
+            }
         }
     </script>
 </head>
@@ -352,7 +403,7 @@
     var frontCtx = $("#frontCanvas")[0].getContext('2d');
     var hlCtx = $("#highLightCanvas")[0].getContext('2d');
     walkTable = sq2walkTable(theSquares);
-    console.log(walkTable);
+    //    console.log(walkTable);
     marioGame(bgCtx, frontCtx);
 </script>
 </body>
