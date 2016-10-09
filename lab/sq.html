@@ -48,7 +48,7 @@
             landFriction: 1,
             airMaxVelocity: 60,
             jumpVelocity: 17,
-            startPoint: [100, 50],
+            startPoint: [100, 10],
             playerSize: [20, 20]
         };
 
@@ -70,7 +70,8 @@
                     GameConstParam.playerSize[0],
                     GameConstParam.playerSize[1]);
         }
-
+        var squaresWithoutLocation = [[100, 100], [100, 100], [100, 100], [100, 100], [100, 210], [100, 100], [100, 100],
+            [210, 100], [100, 100], [100, 100], [210, 210], [100, 100], [320, 100], [100, 320], [320, 210]];
 
         var nowChoose = 0
         var walkTable = [{'left': 0, 'right': 1, 'up': 2, 'down': 3}]
@@ -171,6 +172,49 @@
                 }
             }
             return false;
+        }
+
+        function sqPutLocation(a, h, dis, stX, stY) {
+            stX = stX || 0;
+            stY = stY || 0;
+            var b = a.sort(function (x, y) {
+                if (x[0] != y[0])return y[0] - x[0];
+                return y[1] - x[1];
+            });
+            var now = 0;
+            var ret = [];
+            var canPoints = [[stX, stY]];
+            while (now < b.length) {
+                fnow = now;
+                for (var i = 0; i < canPoints.length; i++) {
+                    var x = canPoints[i][0];
+                    var y = canPoints[i][1];
+                    sq = [x, y, b[now][0], b[now][1]];
+                    if (sq[1] + sq[3] <= h && !isCrossWithAny(sq, ret)) {
+                        ret.push(sq);
+                        canPoints.splice(i, 1);
+                        canPoints.push([sq[0] + sq[2] + dis, sq[1]]);
+                        canPoints.push([sq[0], sq[1] + sq[3] + dis]);
+                        canPoints = canPoints.sort(function (x, y) {
+                            if (x[0] != y[0])return x[0] - y[0];
+                            return x[1] - y[1];
+                        });
+                        now++;
+                        break;
+                    }
+                }
+                if (now == fnow) {
+                    var last = canPoints[canPoints.length - 1];
+                    if (last[1] == stY) {
+                        console.log("put squares location error!", ret, canPoints, now);
+                        alert(b[now]+' can\'t put! map height is '+h);
+                        break;
+                    }
+                    canPoints.push([last[0], stY]);
+                }
+            }
+            console.log(ret);
+            return ret;
         }
 
         function marioGame(bgCtx, frontCtx) {
@@ -402,6 +446,7 @@
     var bgCtx = canvasBg.getContext('2d');
     var frontCtx = $("#frontCanvas")[0].getContext('2d');
     var hlCtx = $("#highLightCanvas")[0].getContext('2d');
+    theSquares = sqPutLocation(squaresWithoutLocation, 400, 10, 10, 50);
     walkTable = sq2walkTable(theSquares);
     //    console.log(walkTable);
     marioGame(bgCtx, frontCtx);
