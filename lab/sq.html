@@ -113,7 +113,7 @@
                     //b's middle is in the a's range , choose the nearest, then up most
                     return 1e9 - (a[0] - (b[0] + b[2])) * 10000 - (bm[1] - a[1])
                 } else if (bm[0] < am[0] && am[1] >= b[1] && am[1] <= b[1] + b[3]) {
-                    return 1e9 - (am[0] - bm[0]) * 10000 + (am[1] - b[1])
+                    return 1e9 - (a[0] - (b[0] + b[2])) * 10000 + (am[1] - b[1])
                 }
                 if (bm[0] > am[0])return -1e9;
                 if (abs(bm[1] - am[1]) > abs(bm[0] - am[0]))return -1e9;
@@ -207,7 +207,7 @@
                     var last = canPoints[canPoints.length - 1];
                     if (last[1] == stY) {
                         console.log("put squares location error!", ret, canPoints, now);
-                        alert(b[now]+' can\'t put! map height is '+h);
+                        alert(b[now] + ' can\'t put! map height is ' + h);
                         break;
                     }
                     canPoints.push([last[0], stY]);
