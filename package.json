@@ -5,6 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "export": "next build && next export",
+    "gh-pages": "npx gh-pages -d out",
     "start": "next start",
     "lint": "next lint"
   },
