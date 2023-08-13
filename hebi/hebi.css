@@ -1,0 +1,35 @@
+canvas {
+    position: absolute
+}
+
+.mycan {
+    width: 800px;
+    height: 480px;
+}
+
+#hebican {
+    z-index: 3
+}
+
+#canvas {
+    z-index: 2
+}
+
+#myCanvas {
+    z-index: 1
+}
+
+.foods{
+    z-index: 4;
+    width: 800px;
+    height: 480px;
+    position: absolute;
+}
+
+.oneFood{
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background:url(1f414.png) no-repeat;
+    background-size:100% 100%;
+}
