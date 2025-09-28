@@ -6,9 +6,9 @@ import Head from "next/head";
 export default function Home() {
 
   const bigButtonData = [
-    {title: '猫羊牌 Cat Sheep Card', href: 'http://card.yuiffy.com/play/#/', description: '简单易懂的多人联机卡牌对战游戏'},
-    {title: '熊蛙棋 Bear Frog Chess', href: 'http://www.yuiffy.com/bear-frog-chess/', description: '又被称为枪棋/炮棋，在4x4的棋盘上12颗棋子的简单的双人对战棋类游戏'},
-    {title: '冻鳗榜单王', href: 'http://rank.yuiffy.com', description: '能够对动画/游戏/食物等进行打分和发布排行榜的榜单网站'},
+    {title: '猫羊牌 Cat Sheep Card', href: 'http://card.daifish.top/play/#/', description: '简单易懂的多人联机卡牌对战游戏'},
+    {title: '熊蛙棋 Bear Frog Chess', href: 'http://www.daifish.top/bear-frog-chess/', description: '又被称为枪棋/炮棋，在4x4的棋盘上12颗棋子的简单的双人对战棋类游戏'},
+    {title: '冻鳗榜单王', href: 'http://rank.daifish.top', description: '能够对动画/游戏/食物等进行打分和发布排行榜的榜单网站'},
     {title: '贪吃蛇 Greedy Hebi', href: 'hebi/hebi.html', description: '简单畅快的贪吃蛇游戏'},
   ];
 
@@ -141,8 +141,8 @@ export default function Home() {
         <div className="text-center">
             <Space direction="vertical" size={1} style={{ display: 'flex' }}>
                 <Button type="link" href="index2.html">旧的主页</Button>
-                <Button type="link" href="mailto:me@yuiffy.com?subject=Hello">联系我们 ( Contact Us )</Button>
-                <Button type="link" href="http://www.beian.miit.gov.cn/">桂ICP备16004207号</Button>
+                <Button type="link" href="mailto:me@daifish.top?subject=Hello">联系我们 ( Contact Us )</Button>
+                {/* <Button type="link" href="http://www.beian.miit.gov.cn/">桂ICP备16004207号</Button> */}
             </Space>
 
         </div>
