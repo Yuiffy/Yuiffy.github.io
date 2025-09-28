@@ -29,32 +29,30 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 
 ## Deploy on GitHub Pages
 
-This project is configured to automatically deploy to GitHub Pages using GitHub Actions.
+This project uses GitHub's automatic deployment to GitHub Pages with Next.js support.
 
 ### GitHub Repository Setup
 
-Before the automatic deployment works, you need to configure GitHub Pages in your repository:
+The repository is configured to automatically deploy using GitHub Pages:
 
-1. Go to your repository Settings
-2. Scroll down to "Pages" section
-3. Under "Source", select "Deploy from a branch"
-4. Choose `gh-pages` branch and `/ (root)` folder
-5. Save the settings
+1. In repository Settings → Pages
+2. Source is set to "GitHub Actions"
+3. The `nextjs.yml` workflow handles the deployment automatically
 
 ### Automatic Deployment
 
 When you push changes to the `feature-nextjs` branch, GitHub Actions will automatically:
 
-1. Install dependencies
+1. Install dependencies using npm
 2. Build the Next.js application with static export
-3. Deploy the built files to the `gh-pages` branch
+3. Deploy directly to GitHub Pages (no separate gh-pages branch needed)
 
 ### Manual Deployment
 
 You can also trigger deployment manually:
 
 1. Go to the "Actions" tab in your GitHub repository
-2. Click on "Deploy to GitHub Pages" workflow
+2. Click on "Deploy Next.js site to Pages" workflow
 3. Click "Run workflow"
 
 ### Local Development
