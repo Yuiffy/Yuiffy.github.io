@@ -142,7 +142,7 @@ export default function Home() {
             <Space direction="vertical" size={1} style={{ display: 'flex' }}>
                 <Button type="link" href="index2.html">旧的主页</Button>
                 <Button type="link" href="mailto:me@daifish.top?subject=Hello">联系我们 ( Contact Us )</Button>
-                {/* <Button type="link" href="http://www.beian.miit.gov.cn/">桂ICP备16004207号</Button> */}
+                <Button type="link" href="http://www.beian.miit.gov.cn/">粤ICP备2025494827号</Button>
             </Space>
 
         </div>
