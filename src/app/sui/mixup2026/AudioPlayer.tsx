@@ -84,7 +84,7 @@ export default function AudioPlayer() {
           preload="auto"
           className="mt-4 w-full opacity-90"
         >
-          <source src="/media/%E5%86%B0%E5%86%B0%E7%9A%84%E6%84%9F.mp3" type="audio/mpeg" />
+          <source src="/media/冰冰的感.mp3" type="audio/mpeg" />
         </audio>
       </div>
     </div>
