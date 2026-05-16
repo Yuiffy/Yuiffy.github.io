@@ -36,7 +36,7 @@ export const metadata: Metadata = {
 export default function Mixup2026Page() {
   return (
     <main
-      className="relative min-h-screen overflow-hidden bg-[#09090b] text-white"
+      className="relative min-h-screen min-h-[100svh] overflow-hidden bg-[#09090b] text-white"
       style={{
         backgroundImage:
           "linear-gradient(180deg, rgba(8, 9, 14, 0.2) 0%, rgba(8, 9, 14, 0.78) 48%, rgba(8, 9, 14, 0.96) 100%), url('/img/sui_xingdian.jpg')",
@@ -47,17 +47,17 @@ export default function Mixup2026Page() {
     >
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.18),transparent_28%),radial-gradient(circle_at_80%_20%,rgba(125,211,252,0.16),transparent_22%),radial-gradient(circle_at_20%_80%,rgba(244,114,182,0.12),transparent_24%)]" />
 
-      <section className="relative flex min-h-screen items-end px-5 pb-8 pt-10 sm:px-8 sm:pb-10">
-        <div className="mx-auto flex w-full max-w-5xl flex-col justify-between gap-10 lg:min-h-[88vh] lg:flex-row lg:items-end">
+      <section className="relative flex min-h-screen min-h-[100svh] items-end px-5 pb-[max(1rem,env(safe-area-inset-bottom))] pt-6 sm:px-8 sm:pb-10 sm:pt-10">
+        <div className="mx-auto flex w-full max-w-5xl flex-col justify-between gap-5 sm:gap-10 lg:min-h-[88vh] lg:flex-row lg:items-end">
           <div className="max-w-xl">
             <p className="text-xs uppercase tracking-[0.42em] text-white/60">Sui / Mixup 2026</p>
-            <h1 className="mt-5 text-[clamp(2.8rem,12vw,6rem)] font-semibold leading-[0.94] tracking-[-0.06em]">
+            <h1 className="mt-4 text-[clamp(2.6rem,11vw,6rem)] font-semibold leading-[0.94] tracking-[-0.06em] sm:mt-5 sm:text-[clamp(2.8rem,12vw,6rem)]">
               岁己SUI
             </h1>
-            <p className="mt-5 max-w-sm text-sm leading-7 text-white/72 sm:text-base">
+            <p className="mt-4 max-w-sm text-sm leading-6 text-white/72 sm:mt-5 sm:text-base sm:leading-7">
               喜欢唱歌的叽叽喳喳的小鸟！
             </p>
-            <div className="mt-6 flex flex-wrap gap-3">
+            <div className="mt-4 flex flex-wrap gap-2.5 sm:mt-6 sm:gap-3">
               {socialLinks.map((link) => (
                 <a
                   key={link.href}
