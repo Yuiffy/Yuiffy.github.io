@@ -4,7 +4,7 @@ import AudioPlayer from './AudioPlayer'
 const socialLinks = [
   {
     href: 'https://space.bilibili.com/1954091502',
-    label: 'B站主页',
+    label: 'B站',
     icon: (
       <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5">
         <path
