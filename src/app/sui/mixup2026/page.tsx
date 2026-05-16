@@ -25,10 +25,10 @@ export default function Mixup2026Page() {
           <div className="max-w-xl">
             <p className="text-xs uppercase tracking-[0.42em] text-white/60">Sui / Mixup 2026</p>
             <h1 className="mt-5 text-[clamp(2.8rem,12vw,6rem)] font-semibold leading-[0.94] tracking-[-0.06em]">
-              冰冰的感
+              岁己SUI
             </h1>
             <p className="mt-5 max-w-sm text-sm leading-7 text-white/72 sm:text-base">
-              一张背景图，一段循环音频，一个适合在手机上静静打开的页面。
+              叽叽喳喳的小鸟
             </p>
           </div>
 
