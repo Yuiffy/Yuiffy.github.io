@@ -28,7 +28,7 @@ export default function Mixup2026Page() {
               岁己SUI
             </h1>
             <p className="mt-5 max-w-sm text-sm leading-7 text-white/72 sm:text-base">
-              叽叽喳喳的小鸟
+              喜欢唱歌的叽叽喳喳的小鸟！
             </p>
           </div>
 
